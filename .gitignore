@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.claude/settings.local.json
+
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/backups/*
+!data/.gitkeep
+!data/backups/.gitkeep
+
+logs/*.log
+!logs/.gitkeep

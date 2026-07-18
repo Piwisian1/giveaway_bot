@@ -1,0 +1,23 @@
+[Unit]
+Description=Telegram Giveaway Bot
+After=network.target
+# Stop retrying after 5 crashes within 60s — e.g. a bad BOT_TOKEN — rather
+# than hammering the Telegram API in an infinite 5-second restart loop.
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=giveawaybot
+WorkingDirectory=/opt/giveaway-bot
+# Without this, Python buffers stdout when it isn't a real terminal, so
+# `journalctl -u giveaway-bot -f` can lag well behind what's actually
+# happening.
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/giveaway-bot/venv/bin/python run.py
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/opt/giveaway-bot/.env
+
+[Install]
+WantedBy=multi-user.target
