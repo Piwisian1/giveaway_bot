@@ -35,9 +35,25 @@ def _title_block(title: str) -> str:
     return f"🎁 <b>{escape_html(title)}</b>"
 
 
-def _first_prize_block(first_prize: str | None) -> str:
-    prize = escape_html(first_prize) if first_prize else _NO_PRIZE_YET
-    return f"🏆 <b>First Prize</b>\n{prize}"
+def _prizes_block(giveaway: Giveaway) -> str:
+    prizes = []
+
+    if giveaway.first_prize:
+        prizes.append(f"🥇 <b>First Prize</b>\n{escape_html(giveaway.first_prize)}")
+
+    if getattr(giveaway, "second_prize", None):
+        prizes.append(f"🥈 <b>Second Prize</b>\n{escape_html(giveaway.second_prize)}")
+
+    if getattr(giveaway, "third_prize", None):
+        prizes.append(f"🥉 <b>Third Prize</b>\n{escape_html(giveaway.third_prize)}")
+
+    if getattr(giveaway, "bonus_prize", None):
+        prizes.append(f"🎁 <b>Bonus Prize</b>\n{escape_html(giveaway.bonus_prize)}")
+
+    if not prizes:
+        prizes.append(_NO_PRIZE_YET)
+
+    return "🏆 <b>Prizes</b>\n\n" + "\n\n".join(prizes)
 
 
 def _end_date_block(end_at: str | None) -> str:
@@ -74,12 +90,12 @@ def render_active_giveaway(giveaway: Giveaway | None, required_channel_count: in
         return NO_ACTIVE_GIVEAWAY
 
     blocks = [
-        _title_block(giveaway.title),
-        _first_prize_block(giveaway.first_prize),
-        _end_date_block(giveaway.end_at),
-        _required_channels_block(required_channel_count),
-        _description_block(giveaway.description),
-    ]
+    _title_block(giveaway.title),
+    _prizes_block(giveaway),
+    _end_date_block(giveaway.end_at),
+    _required_channels_block(required_channel_count),
+    _description_block(giveaway.description),
+]
     return "\n\n".join(block for block in blocks if block is not None)
 
 
